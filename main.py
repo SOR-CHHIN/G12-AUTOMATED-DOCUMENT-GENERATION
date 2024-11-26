@@ -61,21 +61,3 @@ output_folder = "Generate_certificate"
 
 generate_certificates(excel_file, template_file, output_folder)
 
-
-
-# # Create the Tkinter window
-# root = Tk()
-# root.title("Certificate Generator")
-# root.geometry("500x300")
-
-# # Ensure the base folder exists
-# create_base_folder()
-
-# Label(root, text="Certificate Generator", font=("Helvetica", 16)).pack(pady=20)
-
-# Button(root, text="Generate Word/PDF Certificates", command=generate_certificates_with_tkinter, width=30).pack(pady=10)
-# Button(root, text="Generate Image Certificates", command=generate_image_certificates_with_tkinter, width=30).pack(pady=10)
-
-# Button(root, text="Exit", command=root.quit, width=30).pack(pady=10)
-
-# root.mainloop()
