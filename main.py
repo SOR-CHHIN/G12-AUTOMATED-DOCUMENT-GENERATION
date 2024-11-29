@@ -16,7 +16,6 @@ def load_excel_data(filename):
     print("Loaded Excel Data:", data)  # Debugging
     return data
 
-
 # Function to convert Arabic numerals to Khmer numerals
 def convert_to_khmer_number(arabic_number):
     arabic_to_khmer = {
@@ -38,9 +37,8 @@ def prepare_context(template_keys, row_data, khmer_fields=None):
             if field in context and isinstance(context[field], (int, str)):
                 context[field] = convert_to_khmer_number(context[field])
 
-    context["cur_date"] = date.today().strftime("%d-%m-%Y")
+    context["cur_date"] = date.today().strftime("%d %b %Y")
     return context
-
 
 # Render a Word document
 def render_document(template_path, context, output_path):
@@ -49,8 +47,6 @@ def render_document(template_path, context, output_path):
     doc.save(output_path)
     print(f"Document saved: {output_path}")
 
-
-# Generate Word documents for transcripts
 def generate_transcripts(excel_file, word_template, output_dir):
     template_keys = [
         "student_id", "first_name", "last_name", "logic", "l_g", "bcum", "bc_g", "design", 
@@ -69,7 +65,6 @@ def generate_transcripts(excel_file, word_template, output_dir):
     messagebox.showinfo("Success", "Word transcripts generated successfully!")
 
 
-# Generate degrees with Khmer number conversion
 def generate_degrees(excel_file, word_template, output_dir):
     # Define the keys that map to the associate degree template
     template_keys = [
@@ -102,6 +97,8 @@ def generate_degrees(excel_file, word_template, output_dir):
         except Exception as e:
             print(f"Error processing row {row}: {e}")
     messagebox.showinfo("Success", "Associate Degree generated successfully!")
+
+
 def convert_docx_to_pdf(input_dir, output_dir):
     # Ensure the input directory exists
     if not os.path.exists(input_dir):
@@ -116,7 +113,7 @@ def convert_docx_to_pdf(input_dir, output_dir):
             print(f"Converted to PDF: {pdf_path}")
     messagebox.showinfo("Success", "Generated as PDFs successfully!")
 
-# Generate certificates as images
+
 def generate_certificates_as_images(excel_file, output_folder):
     # Ask user to select an image template
     template_file = filedialog.askopenfilename(
@@ -148,80 +145,93 @@ def generate_certificates_as_images(excel_file, output_folder):
     messagebox.showinfo("Success", "Certificates generated successfully!")
 
 
-# Tkinter GUI
-def main():
-    def select_excel_file():
-        filepath = filedialog.askopenfilename(title="Select Excel File", filetypes=[("Excel Files", "*.xlsx")])
-        if filepath:
-            excel_entry.delete(0, tk.END)
-            excel_entry.insert(0, filepath)
+def select_excel_file():
+    filepath = filedialog.askopenfilename(title="Select Excel File", filetypes=[("Excel Files", "*.xlsx")])
+    if filepath:
+        excel_entry.delete(0, tk.END)
+        excel_entry.insert(0, filepath)
 
-    def select_word_template():
-        filepath = filedialog.askopenfilename(title="Select Word Template", filetypes=[("Word Files", "*.docx")])
-        if filepath:
-            word_entry.delete(0, tk.END)
-            word_entry.insert(0, filepath)
+def select_word_template():
+    filepath = filedialog.askopenfilename(title="Select Word Template", filetypes=[("Word Files", "*.docx")])
+    if filepath:
+        word_entry.delete(0, tk.END)
+        word_entry.insert(0, filepath)
 
-    def generate_transcript_word():
-        excel_file = excel_entry.get()
-        word_template = word_entry.get()
-        output_dir = "Transcripts_Word"
-        generate_transcripts(excel_file, word_template, output_dir)
+def generate_transcript_word():
+    excel_file = excel_entry.get()
+    word_template = word_entry.get()
+    output_dir = "Transcripts_Word"
+    generate_transcripts(excel_file, word_template, output_dir)
 
-    def generate_transcript_pdf():
-        input_dir = "Transcripts_Word"
-        output_dir = "Transcripts_PDF"
-        convert_docx_to_pdf(input_dir, output_dir)
+def generate_transcript_pdf():
+    input_dir = "Transcripts_Word"
+    output_dir = "Transcripts_PDF"
+    convert_docx_to_pdf(input_dir, output_dir)
 
-    def generate_degree_word():
-        excel_file = excel_entry.get()
-        word_template = word_entry.get()
-        output_dir = "Degrees_Word"
-        os.makedirs(output_dir, exist_ok=True)
-        generate_degrees(excel_file, word_template, output_dir)
+def generate_degree_word():
+    excel_file = excel_entry.get()
+    word_template = word_entry.get()
+    output_dir = "Degrees_Word"
+    generate_degrees(excel_file, word_template, output_dir)
 
-    def generate_degree_pdf():
-        input_dir = "Degrees_Word"
-        output_dir = "Degrees_PDF"
-        convert_docx_to_pdf(input_dir, output_dir)
+def generate_degree_pdf():
+    input_dir = "Degrees_Word"
+    output_dir = "Degrees_PDF"
+    convert_docx_to_pdf(input_dir, output_dir)
 
-    def generate_certificate_images():
-        excel_file = excel_entry.get()
-        output_folder = "Certificates_Images"
-        generate_certificates_as_images(excel_file, output_folder)
-
-    window = tk.Tk()
-    window.title("Document Generator")
-    window.geometry("600x500")
-
-    # Welcome paragraph
-    welcome_label = tk.Label(
-        window,
-        text="Welcome to Automated Documents Generation",
-        font=("Arial", 18),  # Adjust the font and size as needed
-        fg="black"  # Set the text color to black
-    )
-    welcome_label.pack(pady=20)  # Add some spacing around the label
-# Input fields
-    tk.Label(window, text="Excel File:").pack(pady=5)
-    excel_entry = tk.Entry(window, width=50)
-    excel_entry.pack(pady=5)
-    tk.Button(window, text="Browse Excel File", command=select_excel_file).pack(pady=5)
-
-    tk.Label(window, text="Word Template:").pack(pady=5)
-    word_entry = tk.Entry(window, width=50)
-    word_entry.pack(pady=5)
-    tk.Button(window, text="Browse Word Template", command=select_word_template).pack(pady=5)
-
-    # Buttons
-    tk.Button(window, text="Generate Transcript as Word", command=generate_transcript_word, bg="green", fg="white").pack(pady=5)
-    tk.Button(window, text="Generate Transcript as PDF", command=generate_transcript_pdf, bg="green", fg="white").pack(pady=5)
-    tk.Button(window, text="Generate Associate Degree as Word", command=generate_degree_word, bg="orange", fg="white").pack(pady=5)
-    tk.Button(window, text="Generate Associate Degree as PDF", command=generate_degree_pdf, bg="orange", fg="white").pack(pady=5)
-    tk.Button(window, text="Generate Certificate as Images", command=generate_certificate_images, bg="teal", fg="white").pack(pady=5)
-
-    window.mainloop()
+def generate_certificate_images():
+    excel_file = excel_entry.get()
+    output_folder = "Certificates_Images"
+    generate_certificates_as_images(excel_file, output_folder)
 
 
-if __name__ == "__main__":
-    main()
+
+
+# Create main window
+window = tk.Tk()
+window.title("Document Generator")
+window.geometry("700x500")
+window.config(bg="#f0f0f0")  # Light background for better contrast
+
+# Header
+header = tk.Label(window, text="Automated Document Generation", font=("Arial", 20, "bold"), bg="#f0f0f0", fg="#333")
+header.pack(pady=10)
+
+# Input Section
+input_frame = tk.Frame(window, bg="#f0f0f0")
+input_frame.pack(pady=20)
+
+# Excel File Selection
+tk.Label(input_frame, text="Data File:", font=("Arial", 10), bg="#f0f0f0").grid(row=0, column=0, sticky="w", padx=10, pady=5)
+excel_entry = tk.Entry(input_frame, width=40)
+excel_entry.grid(row=0, column=1, padx=10, pady=5)
+tk.Button(input_frame, text="Browse", command=select_excel_file, bg="#007BFF", fg="white").grid(row=0, column=2, padx=10, pady=5)
+
+# Word Template Selection
+tk.Label(input_frame, text="Templates:", font=("Arial", 10), bg="#f0f0f0").grid(row=1, column=0, sticky="w", padx=10, pady=5)
+word_entry = tk.Entry(input_frame, width=40)
+word_entry.grid(row=1, column=1, padx=10, pady=5)
+tk.Button(input_frame, text="Browse", command=select_word_template, bg="#007BFF", fg="white").grid(row=1, column=2, padx=10, pady=5)
+
+# Button Section
+button_frame = tk.Frame(window, bg="#f0f0f0")
+button_frame.pack(pady=20)
+
+# Transcript Buttons
+tk.Label(button_frame, text="Transcript Options:", font=("Arial", 12, "bold"), bg="#f0f0f0").grid(row=0, columnspan=2, pady=10)
+tk.Button(button_frame, text="Generate as Word", command=generate_transcript_word, bg="green", fg="white", width=25).grid(row=1, column=0, padx=10, pady=5)
+tk.Button(button_frame, text="Generate as PDF", command=generate_transcript_pdf, bg="green", fg="white", width=25).grid(row=1, column=1, padx=10, pady=5)
+
+# Degree Buttons
+tk.Label(button_frame, text="Associate Degree Options:", font=("Arial", 12, "bold"), bg="#f0f0f0").grid(row=2, columnspan=2, pady=10)
+tk.Button(button_frame, text="Generate as Word", command=generate_degree_word, bg="orange", fg="white", width=25).grid(row=3, column=0, padx=10, pady=5)
+tk.Button(button_frame, text="Generate as PDF", command=generate_degree_pdf, bg="orange", fg="white", width=25).grid(row=3, column=1, padx=10, pady=5)
+
+# Certificate Button
+tk.Label(button_frame, text="Certificate Options:", font=("Arial", 12, "bold"), bg="#f0f0f0").grid(row=4, columnspan=2, pady=10)
+tk.Button(button_frame, text="Generate as Images", command=generate_certificate_images, bg="teal", fg="white", width=25).grid(row=5, columnspan=2, pady=10)
+
+
+# Run the application
+window.mainloop()
+
